@@ -1,0 +1,8 @@
+{
+  "body": "{\"categoryId\": 1, \"name\": \"Random stuff\", \"group\": \"primary\"}",
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}
