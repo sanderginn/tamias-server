@@ -1,5 +1,6 @@
 import Sequelize from 'sequelize';
 import BudgetModel from './models/Budget';
+import mysql2 from 'mysql2';
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -7,6 +8,7 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD,
   {
     dialect: 'mysql',
+    dialectModule: mysql2, // workaround for missing import (https://github.com/sequelize/sequelize/issues/9489)
     host: process.env.DB_HOST,
     port: process.env.DB_PORT
   }

@@ -77,3 +77,7 @@ plugins:
 
 package:
   individually: true
+
+resources:
+  # API Gateway Errors
+  - ${file(resources/api-gateway-errors.yml)}
