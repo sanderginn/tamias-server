@@ -1,16 +1,47 @@
 {
-  "name": "server",
-  "version": "0.0.0",
-  "private": true,
+  "name": "tamias-server",
+  "version": "1.0.0",
+  "description": "\"Server code for Tamias\"",
+  "main": "index.js",
   "scripts": {
-    "start": "node ./bin/www"
+    "test": "\"echo \\\"Error: no tests specificed\\\" && exit 1\"",
+    "build": "babel src --out-dir dist",
+    "serve": "db-migrate up && node dist/server.js",
+    "dev-start": "nodemon --exec babel-node src/server.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanderginn/tamias-server.git"
+  },
+  "keywords": [
+    "tamias",
+    "envelope",
+    "budgeting",
+    "server",
+    "express",
+    "keycloak"
+  ],
+  "author": "Sander Ginn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sanderginn/tamias-server/issues"
+  },
+  "homepage": "https://github.com/sanderginn/tamias-server#readme",
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
-    "express": "~4.16.1",
-    "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
-    "morgan": "~1.9.1"
+    "cors": "^2.8.5",
+    "db-migrate": "^0.11.5",
+    "db-migrate-mysql": "^1.1.10",
+    "express": "^4.17.0",
+    "moment": "^2.24.0",
+    "morgan": "^1.9.1",
+    "mysql": "^2.17.1",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.4.4",
+    "nodemon": "^1.19.0"
   }
 }
