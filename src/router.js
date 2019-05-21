@@ -10,7 +10,11 @@ router.use(function (req, res, next) {
 });
 
 router.get('/', function (req, res, next) {
-  return res.status(200).send({ 'message': 'OK' });
+  db.from('users').select("*")
+    .then((rows) => {
+      console.log(rows);
+    });
+  return res.status(200).send({ 'message': 'OK', 'users:': `` });
 });
 
 router.route('/categories')

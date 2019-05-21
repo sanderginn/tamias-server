@@ -1,15 +1,13 @@
-import mysql from 'mysql';
+import Knex from 'knex';
 
-var connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'password',
-  database: 'tamias'
+var client = new Knex({
+  client: 'mysql',
+  connection: {
+    host: 'localhost',
+    user: 'root',
+    password: 'password',
+    database: 'tamias_dev'
+  }
 });
 
-connection.connect(function(err) {
-  if (err) throw err;
-  console.log('You are now connected...');
-});
-
-export default connection;
+export default client;
