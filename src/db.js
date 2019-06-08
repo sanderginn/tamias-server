@@ -1,7 +1,7 @@
 import Knex from 'knex';
 
 var client = new Knex({
-  client: 'mysql',
+  client: 'mysql2',
   connection: {
     host: 'localhost',
     user: 'root',

@@ -17,9 +17,13 @@ router.get('/', function (req, res, next) {
   return res.status(200).send({ 'message': 'OK', 'users:': `` });
 });
 
-router.route('/categories')
-  .post(function (req, res, next) {
-    db.createQuery
-  });
+router.get('/categories', function (req, res, next) {
+  db.from('categories').select("*")
+    .then((rows) => {
+      console.log(rows);
+    });
+
+  return res.status(200).send({ 'message': 'OK', 'categories:': `` });
+});
 
 export default router;
