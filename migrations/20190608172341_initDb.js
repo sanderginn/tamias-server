@@ -27,7 +27,7 @@ exports.up = async function(knex, Promise) {
     table.foreign('userId').references('id').inTable('users');
   });
 
-  await knex.schema.createTable('categoryBudgetAmounts', table => {
+  await knex.schema.createTable('categorybudgetamounts', table => {
     table.decimal('budgetedAmount', 12, 2).notNullable();
     table.integer('budgetId').unsigned().notNullable();
     table.foreign('budgetId').references('id').inTable('budgets');
@@ -60,7 +60,7 @@ exports.down = async function(knex, Promise) {
     t.dropForeign('userId');
   });
 
-  await knex.schema.table('categoryBudgetAmounts', t => {
+  await knex.schema.table('categorybudgetamounts', t => {
     t.dropForeign('budgetId');
     t.dropForeign('categoryId');
   });
@@ -74,5 +74,6 @@ exports.down = async function(knex, Promise) {
   await knex.schema.dropTable('accounts');
   await knex.schema.dropTable('categories');
   await knex.schema.dropTable('budgets');
-  await knex.schema.dropTable('categoryBudgetAmounts');
+  await knex.schema.dropTable('categorybudgetamounts');
+  await knex.schema.dropTable('transactions');
 };
