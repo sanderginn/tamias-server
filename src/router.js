@@ -5,25 +5,31 @@ var router = express.Router();
 
 router.use(function (req, res, next) {
   // do logging
-  console.log('Something is happening.');
   next(); // make sure we go to the next routes and don't stop here
 });
 
 router.get('/', function (req, res, next) {
-  db.from('users').select("*")
-    .then((rows) => {
-      console.log(rows);
-    });
-  return res.status(200).send({ 'message': 'OK', 'users:': `` });
+  db.select('*').from('users')
+    .then(users => {
+      res.status(200).send(users);
+    })
+    .catch(next);
 });
 
 router.get('/categories', function (req, res, next) {
-  db.from('categories').select("*")
-    .then((rows) => {
-      console.log(rows);
-    });
+  db.select('*').from('categories')
+    .then(categories => {
+      res.status(200).send(categories)
+    })
+    .catch(next);
+});
 
-  return res.status(200).send({ 'message': 'OK', 'categories:': `` });
+router.get('/categories/:id', function (req, res, next) {
+  db.select('*').from('categories').where('id', req.params.id)
+    .then(category => {
+      res.status(200).send(category)
+    })
+    .catch(next);
 });
 
 export default router;

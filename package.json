@@ -6,8 +6,8 @@
   "scripts": {
     "test": "\"echo \\\"Error: no tests specificed\\\" && exit 1\"",
     "build": "babel src --out-dir dist",
-    "serve": "db-migrate up && node dist/server.js",
-    "dev-start": "db-migrate up && nodemon --exec babel-node src/server.js"
+    "serve": "knex migrate:latest --env production && node dist/server.js",
+    "dev-start": "knex migrate:latest --env development && knex seed:run --env development && nodemon --exec babel-node src/server.js"
   },
   "repository": {
     "type": "git",
