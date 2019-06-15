@@ -1,5 +1,7 @@
 const faker = require('faker');
 
+const groupChoices = ['primary', 'secondary', 'success', 'danger', 'warning', 'info'];
+
 function createUser() {
   const date = faker.date.recent(150);
   return {
@@ -12,7 +14,8 @@ function createUser() {
 function createCategory(id) {
   return {
     userId: id,
-    name: faker.commerce.department()
+    name: faker.commerce.department(),
+    group: groupChoices[Math.floor(Math.random() * groupChoices.length)]
   };
 }
 
@@ -36,7 +39,7 @@ function createCategoryBudgetAmount(budgetId, categoryId) {
 }
 
 function createTransaction(categoryId, accountId, startDate, endDate, amount) {
-  const transactionAmount = amount / (Math.random() * 5);
+  const transactionAmount = amount / (Math.random() * 15);
   return {
     categoryId: categoryId,
     accountId: accountId,
@@ -66,7 +69,7 @@ exports.seed = async function (knex, Promise) {
   const accounts = [];
   for (let i = 0; i < 100; i++) {
     accounts.push({
-      userId: allUsers[Math.random() * allUsers.length | 0]['id']
+      userId: allUsers[Math.floor(Math.random() * allUsers.length)]['id']
     });
   }
 
@@ -74,7 +77,7 @@ exports.seed = async function (knex, Promise) {
 
   const categories = []
   for (let i = 0; i < 200; i++) {
-    categories.push(createCategory(allUsers[Math.random() * allUsers.length | 0]['id']));
+    categories.push(createCategory(allUsers[Math.floor(Math.random() * allUsers.length)]['id']));
   }
 
   const allCategories = await knex('categories').insert(categories, ['id', 'userId']);

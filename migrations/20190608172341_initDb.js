@@ -15,6 +15,7 @@ exports.up = async function(knex, Promise) {
   await knex.schema.createTable('categories', table => {
     table.increments();
     table.string('name').notNullable();
+    table.string('group');
     table.integer('userId').unsigned().notNullable();
     table.foreign('userId').references('id').inTable('users');
   });
