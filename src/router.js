@@ -16,6 +16,70 @@ router.get('/', function (req, res, next) {
     .catch(next);
 });
 
+router.get('/find_categories_transactions_by_budgetId', function (req, res, next) {
+  // db.select('*').from('budgets')
+  //   .innerJoin('categorybudgetamounts', 'budgets.id', 'categorybudgetamounts.budgetId')
+  //   .innerJoin('categories', 'categorybudgetamounts.categoryId', 'categories.id')
+  //   .innerJoin('transactions', 'categorybudgetamounts.categoryId', 'transactions.categoryId')
+  //   .where('budgets.id', req.query.budgetId)
+  //   .then(budget => {
+  //     res.status(200).json({ budget: budget });
+  //   })
+  //   .catch(next);
+
+  db.select('*').from('budgets')
+    .where('budgets.id', req.query.budgetId)
+    .first()
+    .then(budget => {
+      return budget;
+    })
+    .then(async function (budget) {
+      const result = { budget: budget, categories: {} }
+      await db.select('budgetedAmount', 'categoryId').from('categorybudgetamounts')
+        .where('budgetId', budget.id)
+        .then(categoryBudgetAmounts => {
+          categoryBudgetAmounts.map(amount => {
+            result.categories[amount.categoryId] = { budgetedAmount: amount.budgetedAmount }
+          })
+        });
+
+      for (var categoryId in result.categories) {
+        await db.select('name', 'group', 'id').from('categories')
+          .where('categories.id', categoryId)
+          .first()
+          .then(category => {
+            Object.assign(result.categories[category.id], category);
+          })
+
+        await db.select('*').from('transactions')
+          .where('categoryId', categoryId)
+          .where('date', '>=', result.budget.startDate)
+          .where('date', '<', result.budget.endDate)
+          .then(transactions => {
+            result.categories[categoryId]['transactions'] = transactions;
+          });
+
+      
+      }
+
+      console.log(result);
+
+      return result;
+    })
+    .then(response => {
+      res.status(200).json({ response: response });
+    })
+    .catch(next);
+  // .innerJoin('categorybudgetamounts', 'budgets.id', 'categorybudgetamounts.budgetId')
+  // .innerJoin('categories', 'categorybudgetamounts.categoryId', 'categories.id')
+  // .innerJoin('transactions', 'categorybudgetamounts.categoryId', 'transactions.categoryId')
+  // .where('budgets.id', req.query.budgetId)
+  // .then(budget => {
+  //   res.status(200).json({ budget: budget });
+  // })
+  // .catch(next);
+});
+
 /*
  * Budgets
  */

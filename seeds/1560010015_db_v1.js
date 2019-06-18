@@ -40,10 +40,11 @@ function createCategoryBudgetAmount(budgetId, categoryId) {
 
 function createTransaction(categoryId, accountId, startDate, endDate, amount) {
   const transactionAmount = amount / (Math.random() * 15);
+  startDateMinus3Months = new Date(startDate.setMonth(startDate.getMonth() - 3));
   return {
     categoryId: categoryId,
     accountId: accountId,
-    date: faker.date.between(startDate, endDate),
+    date: faker.date.between(startDateMinus3Months, endDate),
     amount: transactionAmount,
     comment: faker.lorem.words(4)
   }
