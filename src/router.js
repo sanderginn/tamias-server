@@ -17,16 +17,6 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/find_categories_transactions_by_budgetId', function (req, res, next) {
-  // db.select('*').from('budgets')
-  //   .innerJoin('categorybudgetamounts', 'budgets.id', 'categorybudgetamounts.budgetId')
-  //   .innerJoin('categories', 'categorybudgetamounts.categoryId', 'categories.id')
-  //   .innerJoin('transactions', 'categorybudgetamounts.categoryId', 'transactions.categoryId')
-  //   .where('budgets.id', req.query.budgetId)
-  //   .then(budget => {
-  //     res.status(200).json({ budget: budget });
-  //   })
-  //   .catch(next);
-
   db.select('*').from('budgets')
     .where('budgets.id', req.query.budgetId)
     .first()
@@ -58,26 +48,13 @@ router.get('/find_categories_transactions_by_budgetId', function (req, res, next
           .then(transactions => {
             result.categories[categoryId]['transactions'] = transactions;
           });
-
-      
       }
 
       console.log(result);
 
-      return result;
-    })
-    .then(response => {
-      res.status(200).json({ response: response });
+      return res.status(200).json(result);
     })
     .catch(next);
-  // .innerJoin('categorybudgetamounts', 'budgets.id', 'categorybudgetamounts.budgetId')
-  // .innerJoin('categories', 'categorybudgetamounts.categoryId', 'categories.id')
-  // .innerJoin('transactions', 'categorybudgetamounts.categoryId', 'transactions.categoryId')
-  // .where('budgets.id', req.query.budgetId)
-  // .then(budget => {
-  //   res.status(200).json({ budget: budget });
-  // })
-  // .catch(next);
 });
 
 /*
