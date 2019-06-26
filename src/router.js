@@ -16,43 +16,84 @@ router.get('/', function (req, res, next) {
     .catch(next);
 });
 
-router.get('/find_categories_transactions_by_budgetId', function (req, res, next) {
-  db.select('*').from('budgets')
-    .where('budgets.id', req.query.budgetId)
+router.get('/get_current_budget_by_userId', function (req, res, next) {
+  db.select('*').from('users')
+    .where('users.id', req.query.userId)
     .first()
-    .then(budget => {
-      return budget;
+    .then(user => {
+      return user;
     })
-    .then(async function (budget) {
-      const result = { budget: budget, categories: {} }
-      await db.select('budgetedAmount', 'categoryId').from('categorybudgetamounts')
-        .where('budgetId', budget.id)
-        .then(categoryBudgetAmounts => {
-          categoryBudgetAmounts.map(amount => {
-            result.categories[amount.categoryId] = { budgetedAmount: amount.budgetedAmount }
-          })
-        });
+    .then(async function (user) {
+      db.select('*').from('budgets')
+        .where('budgets.userId', user.id)
+        .orderBy('startDate', 'desc')
+        .first()
+        .then(budget => {
+          return budget;
+        })
+        .then(async function (budget) {
+          const result = { budget: budget, categories: {} }
 
-      for (var categoryId in result.categories) {
-        await db.select('name', 'group', 'id').from('categories')
-          .where('categories.id', categoryId)
-          .first()
-          .then(category => {
-            Object.assign(result.categories[category.id], category);
-          })
+          await db.select('*').from('categories')
+            .where('userId', user.id)
+            .where('type', 'USER_DEFINED')
+            .then(categories => {
+              categories.map(category => {
+                result.categories[category.id] = category;
+              })
+            });
 
-        await db.select('*').from('transactions')
-          .where('categoryId', categoryId)
-          .where('date', '>=', result.budget.startDate)
-          .where('date', '<', result.budget.endDate)
-          .then(transactions => {
-            result.categories[categoryId]['transactions'] = transactions;
-          });
-      }
+          await db.select('id').from('categories')
+            .where('userId', user.id)
+            .where('type', 'INCOME')
+            .first()
+            .then(async function (category) {
+              await db.select('*').from('transactions')
+                .where('categoryId', category.id)
+                .where('date', '>=', result.budget.startDate)
+                .where('date', '<', result.budget.endDate)
+                .then(transactions => {
+                  result['income'] = { transactions: transactions };
+                });
+            });
 
-      console.log(result);
+          await db.select('id').from('categories')
+            .where('userId', user.id)
+            .where('type', 'SAVINGS')
+            .first()
+            .then(async function (category) {
+              console.log(category);
+              await db.select('*').from('transactions')
+                .where('categoryId', category.id)
+                .where('date', '>=', result.budget.startDate)
+                .where('date', '<', result.budget.endDate)
+                .then(transactions => {
+                  result['savings'] = { transactions: transactions };
+                });
+            });
 
-      return res.status(200).json(result);
+          await db.select('budgetedAmount', 'categoryId').from('categorybudgetamounts')
+            .where('budgetId', budget.id)
+            .then(categoryBudgetAmounts => {
+              categoryBudgetAmounts.map(amount => {
+                result.categories[amount.categoryId]['budgetedAmount'] = amount.budgetedAmount
+              })
+            });
+
+          for (var categoryId in result.categories) {
+            await db.select('*').from('transactions')
+              .where('categoryId', categoryId)
+              .where('date', '>=', result.budget.startDate)
+              .where('date', '<', result.budget.endDate)
+              .then(transactions => {
+                result.categories[categoryId]['transactions'] = transactions;
+              });
+          }
+
+          console.log(result);
+
+          return res.status(200).json(result);
+        })
     })
     .catch(next);
 });

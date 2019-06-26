@@ -11,12 +11,19 @@ function createUser() {
   }
 }
 
+function createAccount(id) {
+  return {
+    userId: id,
+    name: faker.finance.accountName()
+  }
+}
+
 function createCategory(id) {
   return {
     userId: id,
     name: faker.commerce.department(),
     group: groupChoices[Math.floor(Math.random() * groupChoices.length)]
-  };
+  }
 }
 
 function createBudget(id) {
@@ -69,9 +76,7 @@ exports.seed = async function (knex, Promise) {
 
   const accounts = [];
   for (let i = 0; i < 100; i++) {
-    accounts.push({
-      userId: allUsers[Math.floor(Math.random() * allUsers.length)]['id']
-    });
+    accounts.push(createAccount(allUsers[Math.floor(Math.random() * allUsers.length)]['id']));
   }
 
   const allAccounts = await knex('accounts').insert(accounts, ['id']);
