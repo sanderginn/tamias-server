@@ -36,7 +36,7 @@ router.get('/get_current_budget_by_userId', function (req, res, next) {
 
           await db.select('*').from('categories')
             .where('userId', user.id)
-            .where('type', 'USER_DEFINED')
+            // .where('type', 'USER_DEFINED')
             .then(categories => {
               categories.map(category => {
                 result.categories[category.id] = category;
