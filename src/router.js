@@ -62,7 +62,6 @@ router.get('/get_current_budget_by_userId', function (req, res, next) {
             .where('type', 'SAVINGS')
             .first()
             .then(async function (category) {
-              console.log(category);
               await db.select('*').from('transactions')
                 .where('categoryId', category.id)
                 .where('date', '>=', result.budget.startDate)
@@ -89,6 +88,20 @@ router.get('/get_current_budget_by_userId', function (req, res, next) {
                 result.categories[categoryId]['transactions'] = transactions;
               });
           }
+
+          await db.select('*').from('accounts')
+            .where('userId', user.id)
+            .then(accounts => {
+              result['accounts'] = accounts;
+            });
+
+          await db.select('*').from('transactions')
+            .where('date', '>=', result.budget.startDate)
+            .where('date', '<', result.budget.endDate)
+            .whereIn('accountId', result['accounts'].map(account => account.id))
+            .then(transactions => {
+              result['transactions'] = transactions;
+            });
 
           console.log(result);
 
