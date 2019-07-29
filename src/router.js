@@ -150,7 +150,6 @@ router.get('/categories/:id', function (req, res, next) {
     .where('id', req.params.id)
     .first()
     .then(category => {
-      console.log(category);
       res.status(200).json({ category: category });
     })
     .catch(next);
@@ -194,6 +193,38 @@ router.get('/transactions/find_by_category', function (req, res, next) {
       res.status(200).json({ transactions: transactions });
     })
     .catch(next);
+});
+
+/*
+ * Accounts
+ */
+router.post('/accounts', function (req, res, next) {
+  if (req.body.name === '') {
+    res.status(422).json({
+      code: 101,
+      message: "Validation failed",
+      errors: [
+        {
+          subcode: 1,
+          field: "name",
+          message: "Name must be at least 1 character long"
+        }
+      ]
+    });
+  } else {
+    db.insert({
+      name: req.body.name,
+      userId: req.body.userId
+    }, '*')
+      .into('accounts')
+      .then(newAccount => {
+        res.status(201).json({ newAccount: newAccount[0] });
+      })
+      .catch(err => {
+        console.log(err);
+        res.status(400).send(`Account creation failed:\n${err}`);
+      })
+  }
 });
 
 export default router;
